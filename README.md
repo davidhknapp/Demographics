@@ -1,4 +1,5 @@
-# Demographics
+# Introduction
+This repository is for the demographics data project initially funded by CMA.
 
 # Connecting R Studio to GitHub
 ## Setting up your Fine-Tuned PAT
@@ -11,3 +12,6 @@ You’ll need to configure Git. You can do this through RStudio or in your comma
 
 git config --global user.name 'Your Name'
 git config --global user.email 'your@email.com'
+
+# Data
+As of December 2024, this project consists solely of data from Dallas ISD. Due to data protections, these data are located on OneDrive and will be shared with team members. This may affect some R Studio code, as it may require changing the name of the root directory.
