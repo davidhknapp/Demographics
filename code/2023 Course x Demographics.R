@@ -6,7 +6,7 @@ library(dplyr)
 library(naniar)
 
 ### DATA
-setwd("R Source Data")
+setwd("/Users/dknapp/Library/CloudStorage/OneDrive-FloridaStateUniversity/Data Sets")
 CCMR_data <- read.csv("2023 CCMR.csv", header = TRUE)
 Demo_data <- read.csv("2023 Demo.csv", header = TRUE)
 Courses_data <- read.csv("2023 Courses.csv", header = TRUE)
