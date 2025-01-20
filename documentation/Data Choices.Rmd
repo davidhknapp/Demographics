@@ -1,0 +1,29 @@
+Course Data
+•	Some courses were broken into separate course codes based on semesters (e.g. Music Appreciation: 8813, 8815). All instances of second semester courses with matching first semesters were removed in order not to double count an annual music enrollment.
+•	Music theater courses were excluded as music courses
+•	Confirm that 8779 and 8780 (“Composition Improvisation”) are music classes and not dance classes.
+•	Does Matt have any definitions for these course codes?
+•	What’s the difference between IB Music Studies HLA (6509) and HLB (6510)?
+•	Same thing with SLA (6507) and SLB (6508).
+•	What is “Integration of Abilities” (8859)?
+
+
+Notes for 10/23
+•	For some reason the course data seems to be missing many students in 9, 10, and 11. Looks to be cohort related.
+•	For some reason all the demo files for every year are identical. Go back and check to make sure this isn’t an error on my part (go back to the original files)
+o	1516–1718 are all identical
+o	1819 has its own file size, but it has the same row structure as 1516-1718
+o	1920–2223 are all identical file sizes and row structure is the same as the others
+
+Matt Notes 11/11
+
+•	Matt wants to know retention, grades, CCMR
+•	One credit of PFA for Texas in high school
+•	Does number of years enrolled in music effect CCMR?
+•	Number of years individual students persisted in specific course types
+•	Music appreciation changed to modern band in post-covid
+o	Eliminated music appreciation at the middle school level
+o	MS kids had to be enrolled in a “music experience type class”
+o	At the high school level music appreciation was only possible in a PTEC course (a magnet school where they were dually enrolled in a college class, so it was like a collegiate level music appreciation course). If a high school kid was taking music appreciation in high school, it was now a legit music appreciation course.
+o	This first began in the 2021-22
+o	Any music appreciation course in MS after this change is actually modern band (this is a problem of local counselor mis categorizing)
