@@ -327,6 +327,45 @@ MusicApp_Enrollment_Analysis <- glm(musicapp_binary ~ Race + sex + EcoDis + ELL 
 summary(MusicApp_Enrollment_Analysis)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Extracting Main Analysis Results to CSV
+
+# List of saved regression models in your environment
+model_list <- list(
+  Band_Enrollment = Band_Enrollment_Analysis,
+  Choir_Enrollment = Choir_Enrollment_Analysis,
+  Orchestra_Enrollment = Orchestra_Enrollment_Analysis,
+  Jazz_Enrollment = ModernBand_Enrollment_Analysis,
+  Guitar_Enrollment = MusicTheory_Enrollment_Analysis,
+  Piano_Enrollment = Jazz_Enrollment_Analysis,
+  ModernBand_Enrollment = MusicApp_Enrollment_Analysis
+)
+
+# Function to extract model summaries
+extract_enrollment_model_results <- function(model_name, model) {
+  summary_data <- summary(model)
+  coef_data <- as.data.frame(coef(summary_data))
+  coef_data$Predictor <- rownames(coef_data)
+  coef_data$Model <- model_name
+  
+  # Reorder columns for better presentation
+  coef_data <- coef_data[, c("Model", "Predictor", "Estimate", "Std. Error", "z value", "Pr(>|z|)")]
+  
+  return(coef_data)
+}
+
+# Apply function to all models and combine into one dataframe
+all_enrollmentXdemographic_results <- do.call(rbind, lapply(names(model_list), function(name) {
+  extract_enrollment_model_results(name, model_list[[name]])
+}))
+
+# View the combined results
+head(all_enrollmentXdemographic_results)
+
+# Export to a CSV file
+write.csv(all_enrollmentXdemographic_results, "EnrollmentXDemographic_Analysis_Results.csv", row.names = FALSE)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##Visualization
 ##### Notes for discussion : When creating the predictors for visualization I 
 #     noticed that there are 94630 rows of predictors but 362163 rows of 
