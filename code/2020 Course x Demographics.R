@@ -1,23 +1,20 @@
 ### THIS SCRIPT CREATES A BINARY LOGISTIC REGRESSION FOR SPECIFIC COURSES ###
 ### WITH SELECTED DEMOGRAPHIC VARIABLES AS THE PREDICTOR.                 ###
-
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### LIBRARIES
 library(dplyr)
 library(naniar)
-
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### DATA
 #setwd("R Source Data")
 setwd("data_raw")
 CCMR_data <- read.csv("2020 CCMR.csv", header = TRUE)
 Demo_data <- read.csv("2020 Demo.csv", header = TRUE)
 Courses_data <- read.csv("2020 Courses.csv", header = TRUE)
-
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### EXPLORE DATA
 
 ## CCMR_data
@@ -41,9 +38,8 @@ fa_data <- Courses_data %>%
 
 fa_courses <- fa_data %>%
   distinct(crsname, CRSNUM) ### Create a list of FA courses and numbers
-
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### COURSES DATA
 
 ##Examining Courses
@@ -79,9 +75,8 @@ music_courses_list$CRSNUM <- as.integer(music_courses_list$CRSNUM)
 
 # View the final data frame
 View(music_courses_list)
-
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### DEMOGRAPHIC DATA
 
 ## Data Transformation
@@ -91,7 +86,8 @@ CCMR_data$ELL[CCMR_data$ELL == "C"] <- "Y" ###Current to Yes
 CCMR_data$ELL[CCMR_data$ELL == "F"] <- "N" ###Former to No
 CCMR_data$ELL[CCMR_data$ELL == "M"] <- "N" ###Monitoring to No
 CCMR_data$ELL[CCMR_data$ELL == ""] <- "N"  ###Empty value to No
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Rename CCMR_data column Speced to IEP
 CCMR_data <- CCMR_data %>%
   rename(IEP = SpecEd)
@@ -99,7 +95,8 @@ CCMR_data <- CCMR_data %>%
 CCMR_data$IEP[CCMR_data$IEP == "S"] <- "Y" ###Special to Yes
 CCMR_data$IEP[CCMR_data$IEP == "F"] <- "N" ###Former to No
 CCMR_data$IEP[CCMR_data$IEP == ""] <- "N"  ###Empty value to No
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Convert Strings to factors
 CCMR_data$Race <- as.factor(CCMR_data$Race)
 CCMR_data$EcoDis <- as.factor(CCMR_data$EcoDis)
@@ -107,9 +104,8 @@ CCMR_data$ELL <- as.factor(CCMR_data$ELL)
 CCMR_data$IEP <- as.factor(CCMR_data$IEP)
 
 Demo_data$sex <- as.factor(Demo_data$sex)
-
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ###DATA MERGE
 
 ## Merge Demographic Data
@@ -120,14 +116,14 @@ Demo_data <- Demo_data %>%
   rename(id = idnr)
 
 combined_demo <- merge(CCMR_data, Demo_data, by = "id", all.x = TRUE) ### Left join
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # I'm putting this next section in notes because I think its no longer needed but want to hold onto it in case.
 # ## Merge Demographic Data into Course Data
 # 
 # music_course_demo_merge <- merge(music_courses_2ed......., combined_demo, by = "id", all.x = TRUE) ### Left join
-
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Adding Music Course Enrollment indicators to students
 
 ## Create indicator columns
@@ -162,7 +158,8 @@ Courses_data <- merge(Courses_data,
 
 # View the updated dataframe
 View(Courses_data)
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Change NA music_indicator values to 0
 
 # Replace NA values with 0
@@ -172,7 +169,18 @@ Courses_data <- Courses_data %>%
 # Verify changes
 table(Courses_data$music_indicator)
 
-
+### ^This Counts the number of students in each Category
+#     There are...
+#           3560 Band
+#           1432 Choir
+#           504 Orchestra
+#           776 Modern Band
+#           677 Music Theory
+#           251 Jazz
+#           3558 Music Appreciation
+#           40 Guitar
+#           108 Other
+#           97 Piano
 
 ### Combine Courses_data and combined_demo before analysis
 
@@ -182,14 +190,33 @@ cumulative_data <- Courses_data %>%
 
 # View the first few rows of the combined data
 head(cumulative_data)
-
-
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Create a binary column for overall music enrollment
 cumulative_data$music_binary <- ifelse(cumulative_data$music_indicator >= 1, 1, 0)
 
+### Create a binary column for Band
+cumulative_data$band_binary <- ifelse(cumulative_data$music_indicator == 1, 1, 0)
 
+### Create a binary column for Choir
+cumulative_data$choir_binary <- ifelse(cumulative_data$music_indicator == 2, 1, 0)
 
+### Create a binary column for Orchestra
+cumulative_data$orch_binary <- ifelse(cumulative_data$music_indicator == 3, 1, 0)
+
+### Create a binary column for Modern Band
+cumulative_data$modband_binary <- ifelse(cumulative_data$music_indicator == 4, 1, 0)
+
+### Create a binary column for Music Theory
+cumulative_data$mut_binary <- ifelse(cumulative_data$music_indicator == 5, 1, 0)
+
+### Create a binary column for Jazz
+cumulative_data$jazz_binary <- ifelse(cumulative_data$music_indicator == 6, 1, 0)
+
+### Create a binary column for Music Appreciation
+cumulative_data$musicapp_binary <- ifelse(cumulative_data$music_indicator == 7, 1, 0)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Main Analysis : Multivariate
 
 ###### I'm not familiar with the assumptions testing for binary logistic regressions. What would you like done?
@@ -206,10 +233,100 @@ Music_Enrollment_Analysis <- glm(music_binary ~ Race + sex + EcoDis + ELL + IEP,
 
 # Summarize the model results
 summary(Music_Enrollment_Analysis)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Binary Logistic Regression for
+#       Outcome Variable : Band
+#       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
+# Run logistic regression model
+Band_Enrollment_Analysis <- glm(band_binary ~ Race + sex + EcoDis + ELL + IEP, 
+                                 data = cumulative_data, 
+                                 family = binomial(link = "logit"))
 
+# Summarize the model results
+summary(Band_Enrollment_Analysis)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Binary Logistic Regression for
+#       Outcome Variable : Choir
+#       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
+# Run logistic regression model
+Choir_Enrollment_Analysis <- glm(choir_binary ~ Race + sex + EcoDis + ELL + IEP, 
+                                 data = cumulative_data, 
+                                 family = binomial(link = "logit"))
 
+# Summarize the model results
+summary(Choir_Enrollment_Analysis)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Binary Logistic Regression for
+#       Outcome Variable : Orchestra
+#       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
+
+# Run logistic regression model
+Orchestra_Enrollment_Analysis <- glm(orch_binary ~ Race + sex + EcoDis + ELL + IEP, 
+                                 data = cumulative_data, 
+                                 family = binomial(link = "logit"))
+
+# Summarize the model results
+summary(Orchestra_Enrollment_Analysis)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Binary Logistic Regression for
+#       Outcome Variable : Modern Band
+#       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
+
+# Run logistic regression model
+ModernBand_Enrollment_Analysis <- glm(modband_binary ~ Race + sex + EcoDis + ELL + IEP, 
+                                 data = cumulative_data, 
+                                 family = binomial(link = "logit"))
+
+# Summarize the model results
+summary(ModernBand_Enrollment_Analysis)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Binary Logistic Regression for
+#       Outcome Variable : Music Theory
+#       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
+
+# Run logistic regression model
+MusicTheory_Enrollment_Analysis <- glm(mut_binary ~ Race + sex + EcoDis + ELL + IEP, 
+                                 data = cumulative_data, 
+                                 family = binomial(link = "logit"))
+
+# Summarize the model results
+summary(MusicTheory_Enrollment_Analysis)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Binary Logistic Regression for
+#       Outcome Variable : Music Enrollment
+#       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
+
+# Run logistic regression model
+Jazz_Enrollment_Analysis <- glm(jazz_binary ~ Race + sex + EcoDis + ELL + IEP, 
+                                 data = cumulative_data, 
+                                 family = binomial(link = "logit"))
+#returns an error saying probability is close to 0 or 1. Indicating collinearity?
+
+# Summarize the model results
+summary(Jazz_Enrollment_Analysis)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Binary Logistic Regression for
+#       Outcome Variable : Music Enrollment
+#       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
+
+# Run logistic regression model
+MusicApp_Enrollment_Analysis <- glm(musicapp_binary ~ Race + sex + EcoDis + ELL + IEP, 
+                                 data = cumulative_data, 
+                                 family = binomial(link = "logit"))
+
+# Summarize the model results
+summary(MusicApp_Enrollment_Analysis)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##Visualization
 ##### Notes for discussion : When creating the predictors for visualization I 
 #     noticed that there are 94630 rows of predictors but 362163 rows of 
