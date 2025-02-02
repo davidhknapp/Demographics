@@ -217,14 +217,17 @@ cumulative_data$jazz_binary <- ifelse(cumulative_data$music_indicator == 6, 1, 0
 cumulative_data$musicapp_binary <- ifelse(cumulative_data$music_indicator == 7, 1, 0)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-### Main Analysis : Multivariate
+### Main Analysis : Multivariable Binary Logistic Regressions
 
 ###### I'm not familiar with the assumptions testing for binary logistic regressions. What would you like done?
-###### What about assessing model performance? odds ratio, goodness of fit, confusion matrix?
+###### What about assessing model performance? odds ratio, goodness of fit?
 
-### Binary Logistic Regression for
+### Multivariable Binary Logistic Regression for
 #       Outcome Variable : Music Enrollment
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
+
+# Set "White" as the reference level for Race
+cumulative_data$Race <- relevel(cumulative_data$Race, ref = "White")
 
 # Run logistic regression model
 Music_Enrollment_Analysis <- glm(music_binary ~ Race + sex + EcoDis + ELL + IEP, 
@@ -235,7 +238,7 @@ Music_Enrollment_Analysis <- glm(music_binary ~ Race + sex + EcoDis + ELL + IEP,
 summary(Music_Enrollment_Analysis)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-### Binary Logistic Regression for
+### Multivariable Binary Logistic Regression for
 #       Outcome Variable : Band
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
@@ -248,7 +251,7 @@ Band_Enrollment_Analysis <- glm(band_binary ~ Race + sex + EcoDis + ELL + IEP,
 summary(Band_Enrollment_Analysis)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-### Binary Logistic Regression for
+### Multivariable Binary Logistic Regression for
 #       Outcome Variable : Choir
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
@@ -261,7 +264,7 @@ Choir_Enrollment_Analysis <- glm(choir_binary ~ Race + sex + EcoDis + ELL + IEP,
 summary(Choir_Enrollment_Analysis)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-### Binary Logistic Regression for
+### Multivariable Binary Logistic Regression for
 #       Outcome Variable : Orchestra
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
@@ -274,7 +277,7 @@ Orchestra_Enrollment_Analysis <- glm(orch_binary ~ Race + sex + EcoDis + ELL + I
 summary(Orchestra_Enrollment_Analysis)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-### Binary Logistic Regression for
+### Multivariable Binary Logistic Regression for
 #       Outcome Variable : Modern Band
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
@@ -287,7 +290,7 @@ ModernBand_Enrollment_Analysis <- glm(modband_binary ~ Race + sex + EcoDis + ELL
 summary(ModernBand_Enrollment_Analysis)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-### Binary Logistic Regression for
+### Multivariable Binary Logistic Regression for
 #       Outcome Variable : Music Theory
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
@@ -300,7 +303,7 @@ MusicTheory_Enrollment_Analysis <- glm(mut_binary ~ Race + sex + EcoDis + ELL + 
 summary(MusicTheory_Enrollment_Analysis)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-### Binary Logistic Regression for
+### Multivariable Binary Logistic Regression for
 #       Outcome Variable : Music Enrollment
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
@@ -314,7 +317,7 @@ Jazz_Enrollment_Analysis <- glm(jazz_binary ~ Race + sex + EcoDis + ELL + IEP,
 summary(Jazz_Enrollment_Analysis)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-### Binary Logistic Regression for
+### Multivariable Binary Logistic Regression for
 #       Outcome Variable : Music Enrollment
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
@@ -331,13 +334,14 @@ summary(MusicApp_Enrollment_Analysis)
 
 # List of saved regression models in your environment
 model_list <- list(
+  Overall_Music_Enrollment = Music_Enrollment_Analysis,
   Band_Enrollment = Band_Enrollment_Analysis,
   Choir_Enrollment = Choir_Enrollment_Analysis,
   Orchestra_Enrollment = Orchestra_Enrollment_Analysis,
-  Jazz_Enrollment = ModernBand_Enrollment_Analysis,
-  Guitar_Enrollment = MusicTheory_Enrollment_Analysis,
-  Piano_Enrollment = Jazz_Enrollment_Analysis,
-  ModernBand_Enrollment = MusicApp_Enrollment_Analysis
+  Jazz_Enrollment = Jazz_Enrollment_Analysis,
+  MusicTheory_Enrollment = MusicTheory_Enrollment_Analysis,
+  ModernApp_Enrollment = MusicApp_Enrollment_Analysis,
+  ModernBand_Enrollment = ModernBand_Enrollment_Analysis
 )
 
 # Function to extract model summaries
@@ -359,6 +363,12 @@ all_enrollmentXdemographic_results <- do.call(rbind, lapply(names(model_list), f
 }))
 
 # View the combined results
+head(all_enrollmentXdemographic_results)
+
+# Adding a column which interprets the log-odds as Odd Ratios
+all_enrollmentXdemographic_results$Odds_Ratio <- exp(all_enrollmentXdemographic_results$Estimate)
+
+# Verify the new column
 head(all_enrollmentXdemographic_results)
 
 # Export to a CSV file
