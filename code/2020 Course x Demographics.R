@@ -9,7 +9,8 @@ library(naniar)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### DATA
 #setwd("R Source Data")
-setwd("data_raw")
+#setwd("data_raw")
+setwd("/Users/collinclark/Dallas_Data_workspace/Demorgraphics/data_raw")
 CCMR_data <- read.csv("2020 CCMR.csv", header = TRUE)
 Demo_data <- read.csv("2020 Demo.csv", header = TRUE)
 Courses_data <- read.csv("2020 Courses.csv", header = TRUE)
@@ -217,6 +218,62 @@ cumulative_data$jazz_binary <- ifelse(cumulative_data$music_indicator == 6, 1, 0
 cumulative_data$musicapp_binary <- ifelse(cumulative_data$music_indicator == 7, 1, 0)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Looking for missing demographic values in combined data sets
+
+levels(cumulative_data$Race)
+levels(cumulative_data$sex)
+levels(cumulative_data$EcoDis)
+levels(cumulative_data$ELL)
+levels(cumulative_data$IEP)
+
+# Filter for missing CRSNUM values and select the id column
+missing_ids <- Courses_data %>%
+  filter(is.na(CRSNUM)) %>%
+  distinct(id)
+
+View(missing_ids)
+
+# Get all rows where CRSNUM is missing
+missing_data <- Courses_data %>%
+  filter(is.na(CRSNUM))
+
+View(missing_data)
+
+# Looking for missing data in the cumulative data set
+cumulative_missing_data <- cumulative_data %>%
+  filter(is.na(CRSNUM))
+
+View(cumulative_missing_data)
+
+# Remove rows where id is in missing_ids
+cumulative_data <- cumulative_data %>%
+  filter(!id %in% missing_ids$id)
+
+View(cumulative_data)
+
+# Remaining total participants - 33137 remaining, removed 9865
+length(unique(cumulative_data$id))
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Examining missing values in $sex
+missing_sex <- cumulative_data %>%
+  filter(is.na(sex)) %>%
+  distinct(id)
+
+length(unique(missing_sex$id))
+
+View(missing_sex)
+
+table(Demo_data$sex) #this is where we got it from
+table(combined_demo$sex)
+table(cumulative_data$sex)
+
+# 4?!
+length(unique(cumulative_data$sex))
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Main Analysis : Multivariable Binary Logistic Regressions
 
 ###### I'm not familiar with the assumptions testing for binary logistic regressions. What would you like done?
@@ -228,6 +285,9 @@ cumulative_data$musicapp_binary <- ifelse(cumulative_data$music_indicator == 7, 
 
 # Set "White" as the reference level for Race
 cumulative_data$Race <- relevel(cumulative_data$Race, ref = "White")
+
+# Set "Male" as the reference level for Sex
+cumulative_data$sex <- relevel(cumulative_data$sex, ref = "M")
 
 # Run logistic regression model
 Music_Enrollment_Analysis <- glm(music_binary ~ Race + sex + EcoDis + ELL + IEP, 
@@ -330,6 +390,12 @@ MusicApp_Enrollment_Analysis <- glm(musicapp_binary ~ Race + sex + EcoDis + ELL 
 summary(MusicApp_Enrollment_Analysis)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Checking Assumptions for each model
+#Check Visual Assumptions
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Extracting Main Analysis Results to CSV
 
 # List of saved regression models in your environment
@@ -340,7 +406,7 @@ model_list <- list(
   Orchestra_Enrollment = Orchestra_Enrollment_Analysis,
   Jazz_Enrollment = Jazz_Enrollment_Analysis,
   MusicTheory_Enrollment = MusicTheory_Enrollment_Analysis,
-  ModernApp_Enrollment = MusicApp_Enrollment_Analysis,
+  MusicApp_Enrollment = MusicApp_Enrollment_Analysis,
   ModernBand_Enrollment = ModernBand_Enrollment_Analysis
 )
 
