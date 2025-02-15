@@ -253,7 +253,7 @@ str(CCMR_Master)
 # The only thing needed from here is sex
 #   But there are multiple years of demo data, but 2019 has demo data for every cohort
 #     First we need to see if there are significant changes in the demo sex data
-#     between years. If notm we can just use the 2019 demo data as the master set
+#     between years. If not we can just use the 2019 demo data as the master set
 
 #load data
 demo_19 <- read.csv("2019 Demo.csv", header = TRUE)
@@ -262,8 +262,8 @@ demo_21 <- read.csv("2021 Demo.csv", header = TRUE)
 demo_22 <- read.csv("2022 Demo.csv", header = TRUE)
 demo_23 <- read.csv("2023 Demo.csv", header = TRUE)
 
-#select only the neccessary data
-# Ensure all datasets have the same structure, and make colnames match
+#select only the necessary data
+# Ensure all data sets have the same structure, and make colnames match
 demo_23 <- demo_23 %>%
   rename(idnr = id)
 
@@ -363,6 +363,11 @@ View(students_missing_id)
 #   them with their course data because of this. This also shouldn't skew the distributions 
 #   much either as there was no group > 9 from any one school. Most were around 3 - 5.
 
+# remove the 97
+length(CCMR_Master$id)
+CCMR_Master <- CCMR_Master %>%
+  filter(!is.na(id) | id == "")
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Convert Strings to factors
@@ -408,6 +413,7 @@ View(filtered_demo_cum) # Return 0 observations, so in theory we should just be
 
 demo_cum <- demo_cum %>%
   mutate(idnr = as.vector(idnr))
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Merging Demo and CCMR data
@@ -418,7 +424,401 @@ demo_19 <- demo_19 %>%
 CCMR_demo19_comb <- merge(CCMR_Master, demo_19, by = "id", all.x = TRUE) ### Left join
 
 # The sex vector is still a character because it was taken from the 2019 data set
-CCMR_demo19_comb <- as.factor(CCMR_demo19_comb$sex)
+CCMR_demo19_comb <- CCMR_demo19_comb %>%
+  mutate(sex = as.factor(sex))
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Courses Data
+
+courses_19 <- read.csv("2019 Courses.csv", header = TRUE)
+
+# Examining course_19 data for missings
+
+str(courses_19)
+length(unique(courses_19$idnr))
+
+missing_id_courses_19 <- courses_19 %>%
+  filter(if_all(-idnr, is.na)) %>%
+  select(idnr) 
+
+View(missing_id_courses_19)#None - yay!
+
+#remove unnecessary columns
+
+courses_19 <- courses_19 %>%
+  select(idnr, GRADE, crs_area, CRSNUM, crsname)
+
+str(courses_19)
+table(courses_19$GRADE)#The grade data does not make sense, but we aren't really using this
+table(courses_19$crs_area)#note that there seems to be both "Fine arts"and "Fine Arts courses" categories
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Create Music Course List
+
+unique_courses_19 <- courses_19 %>%
+  distinct(crsname, CRSNUM) %>%
+  arrange(crsname)
+
+print(unique_courses_19)
+
+music_courses_list_19 <- read.csv("music_courses_filtered_2019.csv", header = TRUE)
+
+# ensure columns are numeric
+music_courses_list_19$crs_row_num <- as.integer(music_courses_list_19$crs_row_num)
+music_courses_list_19$CRSNUM <- as.integer(music_courses_list_19$CRSNUM)
+
+# Check work
+View(music_courses_list_19)
+
+# For Reference, music course categories
+## indicator columns
+#   I will use 0 for not enrolled
+#   1 For Band
+#   2 For Choir
+#   3 For Orchestra
+#   4 For Modern Band
+#   5 For Theory
+#   6 Jazz
+#   7 Music Appreciation
+#   8 Guitar
+#   9 Other
+#   10 Piano
+
+# Note Outliers when interpreting data
+#     4 classes labeled Chamber Ensemble, could be band/choir/orch I chose band
+#     I put conducting in other
+#     I put hand bells in Other
+#     I put Mariachi in Orchestra
+#     I put music business in other
+#     I put music history in appreciation
+#     I put music production in Modern Band, feel free to change it
+#     There was a "Partner Band Coach" I left this in Band category but we may change it
+#     I put world music ensembles in other
+
+# Add the music_indicator column to the original course list by matching CRSNUM
+courses_19 <- merge(courses_19, 
+                      music_courses_list_19[, c("CRSNUM", "music_indicator")], 
+                      by = "CRSNUM", 
+                      all.x = TRUE)
+
+# View the updated dataframe
+View(courses_19)
+
+# Change NA music_indicator values to 0
+courses_19 <- courses_19 %>%
+  mutate(music_indicator = ifelse(is.na(music_indicator), 0, music_indicator))
+
+# Verify changes
+table(courses_19$music_indicator)
+
+### ^This Counts the number of students in each Category
+#     There are...
+#           3560 Band
+#           1432 Choir
+#           504 Orchestra
+#           776 Modern Band
+#           677 Music Theory
+#           251 Jazz
+#           3558 Music Appreciation
+#           40 Guitar
+#           108 Other
+#           97 Piano
+###COMEBACK TO THIS THE NUMBERS CHANGED? I THINK ITS BECAUSE I HAVENT REMOVED MISSING IDS YET
+###line 421 it seems i overwrote CCMR-demo combined with just the sex vector..
+### Combine Courses_data and combined_demo before analysis
+
+# Combine CCMR Demo and Courses 
+courses_19 <- courses_19 %>%
+  rename(id = idnr)
+
+courses_19 <- courses_19 %>%
+  mutate(id = as.character(id))
+
+cumulative_master_19 <- courses_19 %>%
+  left_join(CCMR_demo19_comb, by = "id")
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Double check merged data sets
+head(cumulative_master_19)
+
+str(cumulative_master_19)
+
+length(unique(cumulative_master_19$id))
+length(cumulative_master_19$id)
+
+# look for any missentry in id
+sum(is.na(cumulative_master_19$id) | cumulative_master_19$id == "" | trimws(cumulative_master_19$id) == "" | cumulative_master_19$id == ".", na.rm = TRUE)
+
+# double check no id's are missing data
+missing_id_cumulative_19 <- cumulative_master_19 %>%
+  filter(if_all(-id, is.na)) %>%
+  select(id) 
+
+View(missing_id_cumulative_19)
+
+#look for missing demographics to double check our merging
+levels(cumulative_master_19$ELL_cum)
+levels(cumulative_master_19$IEP_cum)
+levels(cumulative_master_19$Race_cum)
+levels(cumulative_master_19$sex)
+levels(cumulative_master_19$Eco_Dis_Cum)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#Earlier we identified two populations that need to be removed from all of the data
+
+# 55 students with errors/changes in sex
+cumulative_master_19 <- cumulative_master_19 %>%
+  filter(!id %in% sex_change_details$id)
+
+# Verify only 55 students were dropped
+length(unique(cumulative_master_19$id))#43,002 - 42,947 = 55
+
+
+# there are more students with missing sex
+missing_master_sex <- cumulative_master_19 %>%
+  filter(is.na(sex) | sex == " ")
+length(unique(missing_master_sex$id))
+
+#look for trends in the 4119 missing sex students
+table(missing_master_sex$GRADE)
+table(missing_master_sex$campus_name)
+#compare to total campus numbers
+table(cumulative_master_19$campus_name)# seems random
+
+#pull demographic data for the students with missing sex from the remaining demo years
+missing_master_sex <- missing_master_sex %>%
+  rename(idnr = id)
+
+missing_master_sex <- missing_master_sex %>%
+  mutate(idnr = as.numeric(idnr))
+
+#join 19x20
+missing_sexXyear <- missing_master_sex %>%
+  inner_join(demo_20, by = "idnr")
+
+missing_sexXyear <- missing_sexXyear %>%
+  rename(sex19 = sex.x, sex20 = sex.y)
+
+missing_sexXyear <- missing_sexXyear %>%
+  select(idnr, sex19, sex20)
+
+#add 21
+demo_21_sex <- demo_21 %>%
+  select(idnr, sex) %>%
+  rename(sex21 = sex)
+
+missing_sexXyear <- missing_sexXyear %>%
+  inner_join(demo_21_sex, by = "idnr")
+
+#add 22
+demo_22_sex <- demo_22 %>%
+  select(idnr, sex) %>%
+  rename(sex22 = sex)
+
+missing_sexXyear <- missing_sexXyear %>%
+  inner_join(demo_22_sex, by = "idnr")
+
+#add 23
+demo_23_sex <- demo_23 %>%
+  select(idnr, sex) %>%
+  rename(sex23 = sex)
+
+missing_sexXyear <- missing_sexXyear %>%
+  inner_join(demo_23_sex, by = "idnr")
+
+View(missing_sexXyear)
+#at a glance these seem to be a combination of only one sex and missings
+# We will double check for sex changes, but if there are no sex changes (which
+#   there shouldn't be since we removed them) then we can coalesce these years.
+
+students_with_MF_dblcheck <- missing_sexXyear %>%
+  rowwise() %>%
+  filter(any(c(sex19, sex20, sex21, sex22, sex23) == "M") & 
+           any(c(sex19, sex20, sex21, sex22, sex23) == "F")) %>%
+  ungroup()
+
+View(students_with_MF_dblcheck)  # nothing!
+
+#coalesce columns
+missing_sexXyear_coalesced <- missing_sexXyear %>%
+  # Convert empty spaces to NA before coalescing
+  mutate(across(starts_with("sex"), ~na_if(trimws(.), ""))) %>%
+  mutate(sex = coalesce(sex19, sex20, sex21, sex22, sex23)) %>%
+  select(idnr, sex)
+
+# Check for remaining NA values
+sum(is.na(missing_sexXyear_coalesced$sex))
+View(missing_sexXyear_coalesced)#Of the 13,019 originally missing sex I was able
+                                #to find sex for all but 1100 of them. THIS IS LONG
+
+missing_sexXyear_coalesced <- missing_sexXyear_coalesced %>%
+  rename(id = idnr)
+
+#Condense the long data set
+missing_sexXyear_coalesced <- missing_sexXyear_coalesced %>%
+  group_by(id) %>%
+  summarise(sex = first(sex), .groups = "drop")
+
+# The table below shows that there were 4132 students with missing sex in 2019.
+# I was able to find consistent sex values for 3866 of them leaving blanks for
+# 266. These 266 will be removed.
+table(missing_sexXyear_coalesced$sex)
+
+#Move the 266 NA sex students to a seperate df
+missing_sex_ids <- missing_sexXyear_coalesced %>%
+  filter(is.na(sex)) %>%
+  distinct(id)
+
+#Drop the 266 from cumulative_master_19 and missing_sexXyear_coalesced
+missing_sexXyear_coalesced <- missing_sexXyear_coalesced %>%
+  filter(!id %in% missing_sex_ids$id)
+
+cumulative_master_19 <- cumulative_master_19 %>%
+  filter(!id %in% missing_sex_ids$id)
+
+#impute the updated 3866 students sex into cumulative_master_19
+#this feels tricky, I'm making a back up first...glad I did...
+cumulative_master_19_bckup <- cumulative_master_19
+
+missing_sexXyear_coalesced <- missing_sexXyear_coalesced %>%
+  mutate(id = as.character(id))
+
+table(cumulative_master_19$sex)
+
+cumulative_master_19 <- cumulative_master_19 %>%
+  mutate(sex = na_if(trimws(sex), "")) %>%
+  left_join(missing_sexXyear_coalesced %>%
+  select(id, sex), by = "id", suffix = c("", "_new")) %>%
+  mutate(sex = coalesce(sex, sex_new)) %>%
+  select(-sex_new)
+
+#Double check it worked
+#   subtract the sum of the table below from the sum of the table before the mutation
+#     (211006 + 194316) - (11919 + 204931 + 188472) = 0
+# 0 means it worked
+table(cumulative_master_19$sex)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# 97 students without id numbers
+missing_master_id_count <- cumulative_master_19 %>%
+  filter(is.na(id) | id == "") %>%
+  summarise(count = n())
+print(missing_master_id_count)#the 97 disapeared?
+## The 97 students with missing id's were dropped when I used a left join with
+#     the courses_19 and the CCMR_demo_comb, since left join preserves the rows
+#     of the left arguement and the 97 students were not in the course data, they
+#     were dropped
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Main Analysis : Data Prep
+
+##Prep data with binary indicators for each category
+
+# Create a binary column for overall music enrollment
+cumulative_master_19$music_binary <- ifelse(cumulative_master_19$music_indicator >= 1, 1, 0)
+
+# Create a binary column for Band
+cumulative_master_19$band_binary <- ifelse(cumulative_master_19$music_indicator == 1, 1, 0)
+
+# Create a binary column for Choir
+cumulative_master_19$choir_binary <- ifelse(cumulative_master_19$music_indicator == 2, 1, 0)
+
+# Create a binary column for Orchestra
+cumulative_master_19$orch_binary <- ifelse(cumulative_master_19$music_indicator == 3, 1, 0)
+
+# Create a binary column for Modern Band
+cumulative_master_19$modband_binary <- ifelse(cumulative_master_19$music_indicator == 4, 1, 0)
+
+# Create a binary column for Music Theory
+cumulative_master_19$mut_binary <- ifelse(cumulative_master_19$music_indicator == 5, 1, 0)
+
+# Create a binary column for Jazz
+cumulative_master_19$jazz_binary <- ifelse(cumulative_master_19$music_indicator == 6, 1, 0)
+
+# Create a binary column for Music Appreciation
+cumulative_master_19$musicapp_binary <- ifelse(cumulative_master_19$music_indicator == 7, 1, 0)
+
+
+## The data set was converted to a long data set when merged with courses. 
+#     Convert back to student level data while preserving binary indicators
+
+cum_data_for_analysis <- cumulative_master_19 %>%
+  group_by(id) %>%
+  summarise(
+    ELL_cum = first(ELL_cum),
+    IEP_cum = first(IEP_cum),
+    Race_cum = first(Race_cum),
+    sex = first(sex),
+    Eco_Dis_Cum = first(Eco_Dis_Cum),
+    
+    music_binary = max(music_binary),
+    band_binary = max(band_binary),
+    choir_binary = max(choir_binary),
+    orch_binary = max(orch_binary),
+    modband_binary = max(modband_binary),
+    mut_binary = max(mut_binary),
+    jazz_binary = max(jazz_binary),
+    musicapp_binary = max(musicapp_binary)
+  ) %>%
+  ungroup()
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### Main Analysis Model
+# many assumptions tests in R like to use the model after it has been run so we
+#   will run the regression first then return to check assumptions
+
+### Multivariable Binary Logistic Regression for
+#       Outcome Variable : Music Enrollment
+#       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
+
+# Set "White" as the reference level for Race
+cum_data_for_analysis$Race_cum <- relevel(cum_data_for_analysis$Race_cum, ref = "White")
+
+# Set "Male" as the reference level for Sex
+cum_data_for_analysis$sex <- factor(cum_data_for_analysis$sex)
+cum_data_for_analysis$sex <- relevel(cum_data_for_analysis$sex, ref = "M")
+
+# Run logistic regression model
+Music_Enrollment_Analysis <- glm(music_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
+                                 data = cum_data_for_analysis, 
+                                 family = binomial(link = "logit"))
+
+# Summarize the model results
+summary(Music_Enrollment_Analysis)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Assumptions
+
+## Multicollinearity
+
+library(car)
+vif(Music_Enrollment_Analysis)
+#   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
+#   VIF < 5 → No serious multicollinearity issues.
+#We passed the test
+
+##Testing for outliers usings cook's distance
+influence_measures <- influence.measures(Music_Enrollment_Analysis)
+print(influence_measures)
+
+# Plot Cook's Distance
+plot(cooks.distance(Music_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+# Pass
+
+## Testing for highly imbalanced class
+# a balance of 90% : 10% is a cause for concern in binary regressions
+table(cum_data_for_analysis$music_binary)
+prop.table(table(cum_data_for_analysis$music_binary))
+
+##Model Fit, Goodness of Fit Test
+library(ResourceSelection)
+
+hoslem.test(Music_Enrollment_Analysis$y, fitted(Music_Enrollment_Analysis), g = 9)
+#p > 0.05 → Model fits well (good calibration).
+#p < 0.05 → Poor model fit.
+## Concerning
+
