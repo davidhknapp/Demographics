@@ -801,6 +801,12 @@ vif(Music_Enrollment_Analysis)
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
+#McFaddens R^2 assessing model fit
+library(pscl)
+pR2(Music_Enrollment_Analysis)
+#R² > 0.2 → Decent fit.
+#R² < 0.1 → Weak model (consider adding more predictors).
+
 ##Testing for outliers usings cook's distance
 influence_measures <- influence.measures(Music_Enrollment_Analysis)
 print(influence_measures)
@@ -849,6 +855,11 @@ vif(Band_Enrollment_Analysis)
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
+#McFaddens R^2 assessing model fit
+pR2(Band_Enrollment_Analysis)
+#R² > 0.2 → Decent fit.
+#R² < 0.1 → Weak model (consider adding more predictors).
+
 ##Testing for outliers usings cook's distance
 influence_measures <- influence.measures(Band_Enrollment_Analysis)
 print(influence_measures)
@@ -896,6 +907,11 @@ vif(Choir_Enrollment_Analysis)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
+
+#McFaddens R^2 assessing model fit
+pR2(Choir_Enrollment_Analysis)
+#R² > 0.2 → Decent fit.
+#R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
 influence_measures <- influence.measures(Choir_Enrollment_Analysis)
@@ -949,6 +965,11 @@ vif(Orchestra_Enrollment_Analysis)
 influence_measures <- influence.measures(Orchestra_Enrollment_Analysis)
 print(influence_measures)
 
+#McFaddens R^2 assessing model fit
+pR2(Orchestra_Enrollment_Analysis)
+#R² > 0.2 → Decent fit.
+#R² < 0.1 → Weak model (consider adding more predictors).
+
 # Plot Cook's Distance
 plot(cooks.distance(Orchestra_Enrollment_Analysis), type = "h", main = "Cook's Distance")
 # Pass
@@ -992,6 +1013,11 @@ vif(ModBand_Enrollment_Analysis)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
+
+#McFaddens R^2 assessing model fit
+pR2(ModBand_Enrollment_Analysis)
+#R² > 0.2 → Decent fit.
+#R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
 influence_measures <- influence.measures(ModBand_Enrollment_Analysis)
@@ -1041,6 +1067,11 @@ vif(MusicTheory_Enrollment_Analysis)
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
+#McFaddens R^2 assessing model fit
+pR2(MusicTheory_Enrollment_Analysis)
+#R² > 0.2 → Decent fit.
+#R² < 0.1 → Weak model (consider adding more predictors).
+
 ##Testing for outliers usings cook's distance
 influence_measures <- influence.measures(MusicTheory_Enrollment_Analysis)
 print(influence_measures)
@@ -1089,6 +1120,11 @@ vif(Jazz_Enrollment_Analysis)
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
+#McFaddens R^2 assessing model fit
+pR2(Jazz_Enrollment_Analysis)
+#R² > 0.2 → Decent fit.
+#R² < 0.1 → Weak model (consider adding more predictors).
+
 ##Testing for outliers usings cook's distance
 influence_measures <- influence.measures(Jazz_Enrollment_Analysis)
 print(influence_measures)
@@ -1136,6 +1172,11 @@ vif(MusicAppreciation_Enrollment_Analysis)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
+
+#McFaddens R^2 assessing model fit
+pR2(MusicAppreciation_Enrollment_Analysis)
+#R² > 0.2 → Decent fit.
+#R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
 influence_measures <- influence.measures(MusicAppreciation_Enrollment_Analysis)
@@ -1203,3 +1244,16 @@ head(all_enrollmentXdemographic_results)
 
 # Export to a CSV file
 write.csv(all_enrollmentXdemographic_results, "EnrollmentXDemographic_Analysis_Results_V2.csv", row.names = FALSE)
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+###Visualizations
+
+# Marginal Model Plots
+Music_Enrollment_model_plot <- marginalModelPlot(Music_Enrollment_Analysis)
+Band_Enrollment_model_plot <- marginalModelPlot(Band_Enrollment_Analysis)
+Choir_Enrollment_model_plot <- marginalModelPlot(Choir_Enrollment_Analysis)
+Orchestra_Enrollment_model_plot <- marginalModelPlot(Orchestra_Enrollment_Analysis)
+MusicTheory_Enrollment_model_plot <- marginalModelPlot(MusicTheory_Enrollment_Analysis)
+ModBand_Enrollment_model_plot <- marginalModelPlot(ModBand_Enrollment_Analysis)
+MusicAppreciation_Enrollment_model_plot <- marginalModelPlot(MusicAppreciation_Enrollment_Analysis)
