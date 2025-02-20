@@ -1,0 +1,18 @@
+---
+title: "Dallas Data Ideas"
+output: html_document
+date: "2025-02-20"
+---
+
+~~~ Possible avenues for future research
+
+What if we binned music enrollment as
+  Big 3 (Band, Choir, Orchestra)
+  "_____" ( Modern Band, Music appreciation, other small ensembles)
+  "_____" ( Jazz Band, Theory, Conducting, etc..)
+  
+
+Are eco dis/minority populations less likely to persist in music education3rd and 4th years?
+
+If we can get specifics on funding from Music will and Dallas Schools we can look at
+before and after enrollment trends in those courses. 

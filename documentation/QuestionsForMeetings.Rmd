@@ -1,0 +1,59 @@
+---
+title: "Dallas Questions"
+output: html_document
+date: "2025-02-20"
+---
+~~~ Questions for District Music Supervisor
+# Course code questions
+
+When did your district begin having a modern band code?
+
+  When did course codes change in music appreciation?
+  
+  Did course code changes result in any change of presentation of courses to the students?
+  
+# Course enrollment questions
+
+Do you know what a Music and Media class is?
+  Music and Media was placed in other
+
+Do you know how many or where Mariachi classes are being coded?
+  Are there many Mariachi ensembles?
+  Mariachi was placed in orchestra again, same as 2019
+  
+# District Knowledge
+  
+What are the Administrative blockers that prevent students in your district from enrolling in music education
+
+Have there been any program, funding, or policy shifts in the recent years?
+
+How have music funds been used in recent years, has it changed?
+
+Would you be able to help us get music teacher demographic data - could you fill in the gaps in our knowledge?
+    (First see where we are on collecting this ourselves)
+    
+Are all schools on the same scheduling system or are some block vs 7 period?
+  What schools are which?
+  
+Why are music appreciation numbers so high?
+
+What are the graduation requirements as they relate to music?
+
+#Pressuring Larry
+
+Can we get attendance data?
+
+Is it possible to get data prior to that.
+  (Does the introduction from modern band cannobilize enrollment from traditional ensembles)
+  
+We want all enrollment, not just a cohort. 
+  Data structure was not that useful
+  
+~~~~For Brian
+
+When was the funding given to Seagull HS,
+  what are the specific site and dates of investments
+  
+
+  
+
