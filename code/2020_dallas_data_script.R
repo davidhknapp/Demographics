@@ -68,7 +68,7 @@ View(unique_courses_20)
 write.csv(unique_courses_20, "unique_courses_filtered_2020.csv", row.names = FALSE)
 # export the unique_courses_20 to excel to manually clean 
 
-music_courses_list_20 <- read.csv("music_courses_filtered_2020.csv", header = TRUE)
+music_courses_list_20 <- read.csv("music_courses_filtered_2020_v2.csv", header = TRUE)
 
 # ensure columns are numeric
 music_courses_list_20$CRSNUM <- as.integer(music_courses_list_20$CRSNUM)
@@ -100,21 +100,6 @@ View(music_courses_list_20)
 #     music and media was placed in other
 #     mariachi was placed in orchestra to be consistant
 
-# Number of students in each type (note: this assumes 1 enrollment per student 
-#                   in each category which may be incorrect for some students 
-#                   since the data set is long)
-#   1 For Band - 4518
-#   2 For Choir - 308
-#   3 For Orchestra - 503
-#   4 For Modern Band - 76
-#   5 For Theory - 513
-#   6 Jazz - 242
-#   7 Music Appreciation - 3551
-#   8 Guitar - 40
-#   9 Other - 88
-#   10 Piano - 90
-
-
 # Add the music_indicator column to the original course list by matching CRSNUM
 courses_20 <- merge(courses_20, 
                     music_courses_list_20[, c("CRSNUM", "music_indicator")], 
@@ -132,17 +117,20 @@ courses_20 <- courses_20 %>%
 table(courses_20$music_indicator)
 
 ### ^This Counts the number of students in each Category
+#                   (note: this assumes 1 enrollment per student 
+#                   in each category which may be incorrect for some students 
+#                   since the data set is long)
 #     There are...
-#           3560 Band
-#           1432 Choir
-#           504 Orchestra
-#           776 Modern Band
-#           677 Music Theory
-#           251 Jazz
-#           3558 Music Appreciation
+#           3821 Band
+#           308 Choir
+#           503 Orchestra
+#           773 Modern Band
+#           513 Music Theory
+#           242 Jazz
+#           3551 Music Appreciation
 #           40 Guitar
-#           108 Other
-#           97 Piano
+#           88 Other
+#           90 Piano
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Combine Courses_data and CCMR_demo19_comb to cumaltive_master_20 before analysis
