@@ -3,14 +3,20 @@ title: "Dallas Questions"
 output: html_document
 date: "2025-02-20"
 ---
+# ~~~ What is the data telling us ~~~
+
+
+
+
+
 ~~~ Questions for District Music Supervisor
+
 # Course code questions
 
 When did your district begin having a modern band code?
 
-  When did course codes change in music appreciation?
-  
-  Did course code changes result in any change of presentation of courses to the students?
+  When was the district push away from music appreciation to modern band?
+  Was this a policy?
   
 # Course enrollment questions
 
@@ -20,8 +26,6 @@ Do you know what a Music and Media class is?
 Do you know how many or where Mariachi classes are being coded?
   Are there many Mariachi ensembles?
   Mariachi was placed in orchestra again, same as 2019
-  
-We noticed no marching band course codes, is it not coded as a course or just a part of band/club?
   
 # District Knowledge
   
@@ -51,7 +55,7 @@ Is it possible to get data prior to that.
 We want all enrollment, not just a cohort. 
   Data structure was not that useful
   
-~~~~For Brian
+#~~~~For Bryan
 
 When was the funding given to Seagull HS,
   what are the specific site and dates of investments

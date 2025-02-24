@@ -239,7 +239,7 @@ table(CCMR_Master$campus_name)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #Drop remaining duplicate columns
-ccmr_mast_descol <- c("id", "ELL_cum", "IEP_cum", "Race_cum", "Eco_Dis_Cum", "district_name", "campus_id", "campus_name")
+ccmr_mast_descol <- c("idnr", "ELL_cum", "IEP_cum", "Race_cum", "Eco_Dis_Cum", "district_name", "campus_id", "campus_name")
 
 CCMR_Master <- CCMR_Master %>%
   select(all_of(ccmr_mast_descol))
@@ -587,8 +587,9 @@ table(missing_master_sex$campus_name)
 table(cumulative_master_19$campus_name)# seems random
 
 #pull demographic data for the students with missing sex from the remaining demo years
-missing_master_sex <- missing_master_sex %>%
-  rename(idnr = id)
+#####~~~~~ leave for later? I think this is a mistake these columns are duplicated
+#missing_master_sex <- missing_master_sex %>%
+  #rename(idnr = id)
 
 missing_master_sex <- missing_master_sex %>%
   mutate(idnr = as.numeric(idnr))
@@ -754,7 +755,7 @@ cumulative_master_19$musicapp_binary <- ifelse(cumulative_master_19$music_indica
 ## The data set was converted to a long data set when merged with courses. 
 #     Convert back to student level data while preserving binary indicators
 
-cum_data_for_analysis <- cumulative_master_19 %>%
+cum_data_for_analysis_19 <- cumulative_master_19 %>%
   group_by(id) %>%
   summarise(
     ELL_cum = first(ELL_cum),
@@ -786,19 +787,19 @@ cum_data_for_analysis <- cumulative_master_19 %>%
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
 # Set "White" as the reference level for Race
-cum_data_for_analysis$Race_cum <- relevel(cum_data_for_analysis$Race_cum, ref = "White")
+cum_data_for_analysis_19$Race_cum <- relevel(cum_data_for_analysis_19$Race_cum, ref = "White")
 
 # Set "Male" as the reference level for Sex
-cum_data_for_analysis$sex <- factor(cum_data_for_analysis$sex)
-cum_data_for_analysis$sex <- relevel(cum_data_for_analysis$sex, ref = "M")
+cum_data_for_analysis_19$sex <- factor(cum_data_for_analysis_19$sex)
+cum_data_for_analysis_19$sex <- relevel(cum_data_for_analysis_19$sex, ref = "M")
 
 # Run logistic regression model
-Music_Enrollment_Analysis <- glm(music_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
-                                 data = cum_data_for_analysis, 
+Music_Enrollment_Analysis_19 <- glm(music_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
+                                 data = cum_data_for_analysis_19, 
                                  family = binomial(link = "logit"))
 
 # Summarize the model results
-summary(Music_Enrollment_Analysis)
+summary(Music_Enrollment_Analysis_19)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Assumptions
@@ -806,34 +807,33 @@ summary(Music_Enrollment_Analysis)
 ## Multicollinearity
 
 library(car)
-vif(Music_Enrollment_Analysis)
+vif(Music_Enrollment_Analysis_19)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
 #McFaddens R^2 assessing model fit
 library(pscl)
-pR2(Music_Enrollment_Analysis)
+pR2(Music_Enrollment_Analysis_19)
 #R² > 0.2 → Decent fit.
 #R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
-influence_measures <- influence.measures(Music_Enrollment_Analysis)
-print(influence_measures)
+influence.measures(Music_Enrollment_Analysis_19)
 
 # Plot Cook's Distance
-plot(cooks.distance(Music_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+plot(cooks.distance(Music_Enrollment_Analysis_19), type = "h", main = "Cook's Distance")
 # Pass
 
 ## Testing for highly imbalanced class
 # a balance of 90% : 10% is a cause for concern in binary regressions
-table(cum_data_for_analysis$music_binary)
-prop.table(table(cum_data_for_analysis$music_binary))
+table(cum_data_for_analysis_19$music_binary)
+prop.table(table(cum_data_for_analysis_19$music_binary))
 
 ##Model Fit, Goodness of Fit Test
 library(ResourceSelection)
 
-hoslem.test(Music_Enrollment_Analysis$y, fitted(Music_Enrollment_Analysis), g = 9)
+hoslem.test(Music_Enrollment_Analysis_19$y, fitted(Music_Enrollment_Analysis_19), g = 9)
 #p > 0.05 → Model fits well (good calibration).
 #p < 0.05 → Poor model fit.
 ## Concerning
@@ -848,45 +848,44 @@ hoslem.test(Music_Enrollment_Analysis$y, fitted(Music_Enrollment_Analysis), g = 
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
 # Run logistic regression model
-Band_Enrollment_Analysis <- glm(band_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
-                                 data = cum_data_for_analysis, 
+Band_Enrollment_Analysis_19 <- glm(band_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
+                                 data = cum_data_for_analysis_19, 
                                  family = binomial(link = "logit"))
 
 # Summarize the model results
-summary(Band_Enrollment_Analysis)
+summary(Band_Enrollment_Analysis_19)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Assumptions
 
 ## Multicollinearity
 
-vif(Band_Enrollment_Analysis)
+vif(Band_Enrollment_Analysis_19)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
 #McFaddens R^2 assessing model fit
-pR2(Band_Enrollment_Analysis)
+pR2(Band_Enrollment_Analysis_19)
 #R² > 0.2 → Decent fit.
 #R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
-influence_measures <- influence.measures(Band_Enrollment_Analysis)
-print(influence_measures)
+influence.measures(Band_Enrollment_Analysis_19)
 
 # Plot Cook's Distance
-plot(cooks.distance(Band_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+plot(cooks.distance(Band_Enrollment_Analysis_19), type = "h", main = "Cook's Distance")
 # Pass
 
 ## Testing for highly imbalanced class
 # a balance of 90% : 10% is a cause for concern in binary regressions, 5% is really concerning
-table(cum_data_for_analysis$band_binary)
-prop.table(table(cum_data_for_analysis$band_binary))
+table(cum_data_for_analysis_19$band_binary)
+prop.table(table(cum_data_for_analysis_19$band_binary))
 #Concerning
 
 ##Model Fit, Goodness of Fit Test
 
-hoslem.test(Band_Enrollment_Analysis$y, fitted(Band_Enrollment_Analysis), g = 8)
+hoslem.test(Band_Enrollment_Analysis_19$y, fitted(Band_Enrollment_Analysis_19), g = 8)
 #p > 0.05 → Model fits well (good calibration).
 #p < 0.05 → Poor model fit.
 ## Concerning
@@ -901,45 +900,44 @@ hoslem.test(Band_Enrollment_Analysis$y, fitted(Band_Enrollment_Analysis), g = 8)
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
 # Run logistic regression model
-Choir_Enrollment_Analysis <- glm(choir_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
-                                data = cum_data_for_analysis, 
+Choir_Enrollment_Analysis_19 <- glm(choir_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
+                                data = cum_data_for_analysis_19, 
                                 family = binomial(link = "logit"))
 
 # Summarize the model results
-summary(Choir_Enrollment_Analysis)
+summary(Choir_Enrollment_Analysis_19)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Assumptions
 
 ## Multicollinearity
 
-vif(Choir_Enrollment_Analysis)
+vif(Choir_Enrollment_Analysis_19)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
 #McFaddens R^2 assessing model fit
-pR2(Choir_Enrollment_Analysis)
+pR2(Choir_Enrollment_Analysis_19)
 #R² > 0.2 → Decent fit.
 #R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
-influence_measures <- influence.measures(Choir_Enrollment_Analysis)
-print(influence_measures)
+influence.measures(Choir_Enrollment_Analysis_19)
 
 # Plot Cook's Distance
-plot(cooks.distance(Choir_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+plot(cooks.distance(Choir_Enrollment_Analysis_19), type = "h", main = "Cook's Distance")
 # Pass
 
 ## Testing for highly imbalanced class
 # a balance of 90% : 10% is a cause for concern in binary regressions, 5% is really concerning
-table(cum_data_for_analysis$band_binary)
-prop.table(table(cum_data_for_analysis$band_binary))
+table(cum_data_for_analysis_19$band_binary)
+prop.table(table(cum_data_for_analysis_19$band_binary))
 #Concerning
 
 ##Model Fit, Goodness of Fit Test
 
-hoslem.test(Choir_Enrollment_Analysis$y, fitted(Choir_Enrollment_Analysis), g = 8)
+hoslem.test(Choir_Enrollment_Analysis_19$y, fitted(Choir_Enrollment_Analysis_19), g = 8)
 #p > 0.05 → Model fits well (good calibration).
 #p < 0.05 → Poor model fit.
 ## Concerning
@@ -954,45 +952,44 @@ hoslem.test(Choir_Enrollment_Analysis$y, fitted(Choir_Enrollment_Analysis), g = 
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
 # Run logistic regression model
-Orchestra_Enrollment_Analysis <- glm(orch_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
-                                data = cum_data_for_analysis, 
+Orchestra_Enrollment_Analysis_19 <- glm(orch_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
+                                data = cum_data_for_analysis_19, 
                                 family = binomial(link = "logit"))
 
 # Summarize the model results
-summary(Orchestra_Enrollment_Analysis)
+summary(Orchestra_Enrollment_Analysis_19)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Assumptions
 
 ## Multicollinearity
 
-vif(Orchestra_Enrollment_Analysis)
+vif(Orchestra_Enrollment_Analysis_19)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
 ##Testing for outliers usings cook's distance
-influence_measures <- influence.measures(Orchestra_Enrollment_Analysis)
-print(influence_measures)
+influence.measures(Orchestra_Enrollment_Analysis_19)
 
 #McFaddens R^2 assessing model fit
-pR2(Orchestra_Enrollment_Analysis)
+pR2(Orchestra_Enrollment_Analysis_19)
 #R² > 0.2 → Decent fit.
 #R² < 0.1 → Weak model (consider adding more predictors).
 
 # Plot Cook's Distance
-plot(cooks.distance(Orchestra_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+plot(cooks.distance(Orchestra_Enrollment_Analysis_19), type = "h", main = "Cook's Distance")
 # Pass
 
 ## Testing for highly imbalanced class
 # a balance of 90% : 10% is a cause for concern in binary regressions, 5% is really concerning
-table(cum_data_for_analysis$orch_binary)
-prop.table(table(cum_data_for_analysis$orch_binary))
+table(cum_data_for_analysis_19$orch_binary)
+prop.table(table(cum_data_for_analysis_19$orch_binary))
 # Very Concerning
 
 ##Model Fit, Goodness of Fit Test
 
-hoslem.test(Orchestra_Enrollment_Analysis$y, fitted(Orchestra_Enrollment_Analysis), g = 8)
+hoslem.test(Orchestra_Enrollment_Analysis_19$y, fitted(Orchestra_Enrollment_Analysis_19), g = 8)
 #p > 0.05 → Model fits well (good calibration).
 #p < 0.05 → Poor model fit.
 ## Very Concerning
@@ -1007,45 +1004,44 @@ hoslem.test(Orchestra_Enrollment_Analysis$y, fitted(Orchestra_Enrollment_Analysi
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
 # Run logistic regression model
-ModBand_Enrollment_Analysis <- glm(modband_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
-                                data = cum_data_for_analysis, 
+ModBand_Enrollment_Analysis_19 <- glm(modband_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
+                                data = cum_data_for_analysis_19, 
                                 family = binomial(link = "logit"))
 
 # Summarize the model results
-summary(ModBand_Enrollment_Analysis)
+summary(ModBand_Enrollment_Analysis_19)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Assumptions
 
 ## Multicollinearity
 
-vif(ModBand_Enrollment_Analysis)
+vif(ModBand_Enrollment_Analysis_19)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
 #McFaddens R^2 assessing model fit
-pR2(ModBand_Enrollment_Analysis)
+pR2(ModBand_Enrollment_Analysis_19)
 #R² > 0.2 → Decent fit.
 #R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
-influence_measures <- influence.measures(ModBand_Enrollment_Analysis)
-print(influence_measures)
+influence.measures(ModBand_Enrollment_Analysis_19)
 
 # Plot Cook's Distance
-plot(cooks.distance(ModBand_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+plot(cooks.distance(ModBand_Enrollment_Analysis_19), type = "h", main = "Cook's Distance")
 # Pass
 
 ## Testing for highly imbalanced class
 # a balance of 90% : 10% is a cause for concern in binary regressions, 5% is really concerning
-table(cum_data_for_analysis$modband_binary)
-prop.table(table(cum_data_for_analysis$modband_binary))
+table(cum_data_for_analysis_19$modband_binary)
+prop.table(table(cum_data_for_analysis_19$modband_binary))
 # Very Concerning
 
 ##Model Fit, Goodness of Fit Test
 
-hoslem.test(ModBand_Enrollment_Analysis$y, fitted(ModBand_Enrollment_Analysis), g = 8)
+hoslem.test(ModBand_Enrollment_Analysis_19$y, fitted(ModBand_Enrollment_Analysis_19), g = 8)
 #p > 0.05 → Model fits well (good calibration).
 #p < 0.05 → Poor model fit.
 ## Concerning
@@ -1060,45 +1056,44 @@ hoslem.test(ModBand_Enrollment_Analysis$y, fitted(ModBand_Enrollment_Analysis), 
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
 # Run logistic regression model
-MusicTheory_Enrollment_Analysis <- glm(mut_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
-                                data = cum_data_for_analysis, 
+MusicTheory_Enrollment_Analysis_19 <- glm(mut_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
+                                data = cum_data_for_analysis_19, 
                                 family = binomial(link = "logit"))
 
 # Summarize the model results
-summary(MusicTheory_Enrollment_Analysis)
+summary(MusicTheory_Enrollment_Analysis_19)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Assumptions
 
 ## Multicollinearity
 
-vif(MusicTheory_Enrollment_Analysis)
+vif(MusicTheory_Enrollment_Analysis_19)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
 #McFaddens R^2 assessing model fit
-pR2(MusicTheory_Enrollment_Analysis)
+pR2(MusicTheory_Enrollment_Analysis_19)
 #R² > 0.2 → Decent fit.
 #R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
-influence_measures <- influence.measures(MusicTheory_Enrollment_Analysis)
-print(influence_measures)
+influence.measures(MusicTheory_Enrollment_Analysis_19)
 
 # Plot Cook's Distance
-plot(cooks.distance(MusicTheory_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+plot(cooks.distance(MusicTheory_Enrollment_Analysis_19), type = "h", main = "Cook's Distance")
 # Pass
 
 ## Testing for highly imbalanced class
 # a balance of 90% : 10% is a cause for concern in binary regressions, 5% is really concerning
-table(cum_data_for_analysis$mut_binary)
-prop.table(table(cum_data_for_analysis$mut_binary))
+table(cum_data_for_analysis_19$mut_binary)
+prop.table(table(cum_data_for_analysis_19$mut_binary))
 #Very Concerning
 
 ##Model Fit, Goodness of Fit Test
 
-hoslem.test(MusicTheory_Enrollment_Analysis$y, fitted(MusicTheory_Enrollment_Analysis), g = 7)
+hoslem.test(MusicTheory_Enrollment_Analysis_19$y, fitted(MusicTheory_Enrollment_Analysis_19), g = 7)
 #p > 0.05 → Model fits well (good calibration).
 #p < 0.05 → Poor model fit.
 ## Very Concerning
@@ -1113,45 +1108,44 @@ hoslem.test(MusicTheory_Enrollment_Analysis$y, fitted(MusicTheory_Enrollment_Ana
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
 # Run logistic regression model
-Jazz_Enrollment_Analysis <- glm(jazz_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
-                                data = cum_data_for_analysis, 
+Jazz_Enrollment_Analysis_19 <- glm(jazz_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
+                                data = cum_data_for_analysis_19, 
                                 family = binomial(link = "logit"))
 
 # Summarize the model results
-summary(Jazz_Enrollment_Analysis)
+summary(Jazz_Enrollment_Analysis_19)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Assumptions
 
 ## Multicollinearity
 
-vif(Jazz_Enrollment_Analysis)
+vif(Jazz_Enrollment_Analysis_19)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
 #McFaddens R^2 assessing model fit
-pR2(Jazz_Enrollment_Analysis)
+pR2(Jazz_Enrollment_Analysis_19)
 #R² > 0.2 → Decent fit.
 #R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
-influence_measures <- influence.measures(Jazz_Enrollment_Analysis)
-print(influence_measures)
+influence.measures(Jazz_Enrollment_Analysis_19)
 
 # Plot Cook's Distance
-plot(cooks.distance(Jazz_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+plot(cooks.distance(Jazz_Enrollment_Analysis_19), type = "h", main = "Cook's Distance")
 # Pass
 
 ## Testing for highly imbalanced class
 # a balance of 90% : 10% is a cause for concern in binary regressions, 5% is really concerning
-table(cum_data_for_analysis$jazz_binary)
-prop.table(table(cum_data_for_analysis$jazz_binary))
+table(cum_data_for_analysis_19$jazz_binary)
+prop.table(table(cum_data_for_analysis_19$jazz_binary))
 # Possibly not even viable
 
 ##Model Fit, Goodness of Fit Test
 
-hoslem.test(Jazz_Enrollment_Analysis$y, fitted(Jazz_Enrollment_Analysis), g = 8)
+hoslem.test(Jazz_Enrollment_Analysis_19$y, fitted(Jazz_Enrollment_Analysis_19), g = 8)
 #p > 0.05 → Model fits well (good calibration).
 #p < 0.05 → Poor model fit.
 ## surprisingly its not as bad as most of the others
@@ -1166,45 +1160,44 @@ hoslem.test(Jazz_Enrollment_Analysis$y, fitted(Jazz_Enrollment_Analysis), g = 8)
 #       Predictors : Race, Sex, SES (EcoDis), ELL, IEP
 
 # Run logistic regression model
-MusicAppreciation_Enrollment_Analysis <- glm(musicapp_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
-                                data = cum_data_for_analysis, 
+MusicAppreciation_Enrollment_Analysis_19 <- glm(musicapp_binary ~ Race_cum + sex + Eco_Dis_Cum + ELL_cum + IEP_cum, 
+                                data = cum_data_for_analysis_19, 
                                 family = binomial(link = "logit"))
 
 # Summarize the model results
-summary(MusicAppreciation_Enrollment_Analysis)
+summary(MusicAppreciation_Enrollment_Analysis_19)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Assumptions
 
 ## Multicollinearity
 
-vif(MusicAppreciation_Enrollment_Analysis)
+vif(MusicAppreciation_Enrollment_Analysis_19)
 #   VIF > 5 or 10 → High multicollinearity (consider removing or combining variables).
 #   VIF < 5 → No serious multicollinearity issues.
 #We passed the test
 
 #McFaddens R^2 assessing model fit
-pR2(MusicAppreciation_Enrollment_Analysis)
+pR2(MusicAppreciation_Enrollment_Analysis_19)
 #R² > 0.2 → Decent fit.
 #R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
-influence_measures <- influence.measures(MusicAppreciation_Enrollment_Analysis)
-print(influence_measures)
+influence.measures(MusicAppreciation_Enrollment_Analysis_19)
 
 # Plot Cook's Distance
-plot(cooks.distance(MusicAppreciation_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+plot(cooks.distance(MusicAppreciation_Enrollment_Analysis_19), type = "h", main = "Cook's Distance")
 # Pass
 
 ## Testing for highly imbalanced class
 # a balance of 90% : 10% is a cause for concern in binary regressions, 5% is really concerning
-table(cum_data_for_analysis$musicapp_binary)
-prop.table(table(cum_data_for_analysis$musicapp_binary))
+table(cum_data_for_analysis_19$musicapp_binary)
+prop.table(table(cum_data_for_analysis_19$musicapp_binary))
 #Concerning
 
 ##Model Fit, Goodness of Fit Test
 
-hoslem.test(MusicAppreciation_Enrollment_Analysis$y, fitted(MusicAppreciation_Enrollment_Analysis), g = 9)
+hoslem.test(MusicAppreciation_Enrollment_Analysis_19$y, fitted(MusicAppreciation_Enrollment_Analysis_19), g = 9)
 #p > 0.05 → Model fits well (good calibration).
 #p < 0.05 → Poor model fit.
 ## Concerning
@@ -1215,14 +1208,14 @@ hoslem.test(MusicAppreciation_Enrollment_Analysis$y, fitted(MusicAppreciation_En
 
 # List of saved regression models in your environment
 model_list <- list(
-  Music_Enrollment = Music_Enrollment_Analysis,
-  Band_Enrollment = Band_Enrollment_Analysis,
-  Choir_Enrollment = Choir_Enrollment_Analysis,
-  Orchestra_Enrollment = Orchestra_Enrollment_Analysis,
-  Jazz_Enrollment = Jazz_Enrollment_Analysis,
-  MusicTheory_Enrollment = MusicTheory_Enrollment_Analysis,
-  MusicAppreciation_Enrollment = MusicAppreciation_Enrollment_Analysis,
-  ModBand_Enrollment = ModBand_Enrollment_Analysis
+  Music_Enrollment_19 = Music_Enrollment_Analysis_19,
+  Band_Enrollment_19 = Band_Enrollment_Analysis_19,
+  Choir_Enrollment_19 = Choir_Enrollment_Analysis_19,
+  Orchestra_Enrollment_19 = Orchestra_Enrollment_Analysis_19,
+  Jazz_Enrollment_19 = Jazz_Enrollment_Analysis_19,
+  MusicTheory_Enrollment_19 = MusicTheory_Enrollment_Analysis_19,
+  MusicAppreciation_Enrollment_19 = MusicAppreciation_Enrollment_Analysis_19,
+  ModBand_Enrollment_19 = ModBand_Enrollment_Analysis_19
 )
 
 # Function to extract model summaries
@@ -1253,17 +1246,18 @@ enrollmentXdemographic_2019_results$Odds_Ratio <- exp(enrollmentXdemographic_201
 head(enrollmentXdemographic_2019_results)
 
 # Export to a CSV file
-write.csv(enrollmentXdemographic_2019_results, "EnrollmentXDemographic_Analysis_Results_V2.csv", row.names = FALSE)
+write.csv(enrollmentXdemographic_2019_results, "EnrollmentXDemographic_Analysis_Results_2019.csv", row.names = FALSE)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ###Visualizations
 
 # Marginal Model Plots
-Music_Enrollment_model_plot <- marginalModelPlot(Music_Enrollment_Analysis)
-Band_Enrollment_model_plot <- marginalModelPlot(Band_Enrollment_Analysis)
-Choir_Enrollment_model_plot <- marginalModelPlot(Choir_Enrollment_Analysis)
-Orchestra_Enrollment_model_plot <- marginalModelPlot(Orchestra_Enrollment_Analysis)
-MusicTheory_Enrollment_model_plot <- marginalModelPlot(MusicTheory_Enrollment_Analysis)
-ModBand_Enrollment_model_plot <- marginalModelPlot(ModBand_Enrollment_Analysis)
-MusicAppreciation_Enrollment_model_plot <- marginalModelPlot(MusicAppreciation_Enrollment_Analysis)
+Music_Enrollment_model_plot_19 <- marginalModelPlot(Music_Enrollment_Analysis_19)
+Band_Enrollment_model_plot_19 <- marginalModelPlot(Band_Enrollment_Analysis_19)
+Choir_Enrollment_model_plot_19 <- marginalModelPlot(Choir_Enrollment_Analysis_19)
+Orchestra_Enrollment_model_plot_19 <- marginalModelPlot(Orchestra_Enrollment_Analysis_19)
+MusicTheory_Enrollment_model_plot_19 <- marginalModelPlot(MusicTheory_Enrollment_Analysis_19)
+ModBand_Enrollment_model_plot_19 <- marginalModelPlot(ModBand_Enrollment_Analysis_19)
+MusicAppreciation_Enrollment_model_plot_19 <- marginalModelPlot(MusicAppreciation_Enrollment_Analysis_19)
+
