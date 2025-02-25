@@ -5,7 +5,44 @@ date: "2025-02-20"
 ---
 # ~~~ What is the data telling us ~~~
 
-
+# Overall Music Enrollment
+  Across all forms of music education, black students are just as likely to participate as white students.
+  Hispanic students are underrepresented in music education as a whole when compared to white students.
+  Economic status has little to no effect on students enrollment in music education.
+  
+  ELL and IEP status both have significant impacts on participation in music education.
+  
+# Avenues of Music Education
+  When we zoom in and look at specific music education platforms we observe different results.
+  
+  # Band
+      -Band is fairly equitable in representation between White, Black, and Hispanic students.
+        Mixed raced students tend to be over represented in band while Asian students are underrepresented.
+      -Moreover, females are 25% less likely than males to participate in band.
+      -An interesting contrast occurred with a notable improvement in Economic status, ELL, and IEP being found 
+          to be less impactful on students enrollment in band between 2019 and 2020. Although, in both years,
+          evidence suggests that these still remain barriers to access.
+  # Choir
+      -Choir is heavily over represented by white students, with hispanic students being the least likely to enroll.
+      -Females are more than twice as likely to enroll in choir.
+      -In 2019, students with IEP's were 20% more likely than those without to enroll in choir, althouth in 2020
+          they were 22% less likely to enroll. Furthermore, 2020 saw ELL, Economic status, and IEP status all
+          predict lower probabilities to enroll than 2019.
+          
+  # Orchestra
+      - With the exception of black students, minority populations are largely over represented in orchestra in                 comparison to white students.
+      - Orchestra also seems to pose the largest barriers to entry with Economic, ELL, and IEP status having some of            the largest effects in predicting students not enrolling in orchestra.
+      
+  # Jazz
+      - Jazz is over represented by white students and males. It also faces evidence of Economic, ELL, and IEP status            as barriers at similar rates to orchestra.
+      
+  # Music Appreciation
+      - Music appreciation has a very large population, rivaling that of band (the largest single music education                 platform by enrollment).
+      - Minority students and students with IEP's and low Socio-economic status are heavily over represented in music               appreciation. This evidence may indicate Music Appreciation as a "dumping ground".
+      
+  # Modern Band
+      - Minority students and females are less likely to enroll in Modern band than white students or males. 
+      - Students with low socio economic status or ELL students are more likely to be in Modern band than students                 without. Although, IEP's negatively impacted students' probability of enrolling in modern band.
 
 
 
