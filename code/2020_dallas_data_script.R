@@ -26,20 +26,20 @@ courses_20 <- read.csv("2020 Courses.csv", header = TRUE)
 str(courses_20)
 length(unique(courses_20$id))
 
-missing_id_courses_23 <- courses_23 %>%
+missing_id_courses_20 <- courses_20 %>%
   filter(if_all(-id, is.na)) %>%
   select(id) 
 
-View(missing_id_courses_23)#None - yay!
+View(missing_id_courses_20)#None - yay!
 
-# removed students with missin course info
-courses20_unique_ids_2.0 <- courses_20 %>%
+# removed students with missing course info
+courses20_unique_ids <- courses_20 %>%
   filter(!(is.na(CRSNUM) | CRSNUM == ""))
 
-length(unique(courses20_unique_ids_2.0$id))
+length(unique(courses20_unique_ids$id))
 # 33137
 
-courses_20 <- courses20_unique_ids_2.0
+courses_20 <- courses20_unique_ids
 
 #remove non high schoolers
 
@@ -67,7 +67,7 @@ View(unique_courses_20)
 
 write.csv(unique_courses_20, "unique_courses_filtered_2020.csv", row.names = FALSE)
 # export the unique_courses_20 to excel to manually clean 
-
+#updated this to fix an issue in choir
 music_courses_list_20 <- read.csv("music_courses_filtered_2020_v2.csv", header = TRUE)
 
 # ensure columns are numeric
@@ -134,6 +134,8 @@ table(courses_20$music_indicator)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Combine Courses_data and CCMR_demo19_comb to cumaltive_master_20 before analysis
+courses_20 <- courses_20 %>%
+  mutate(id = as.character(id))
 
 cumulative_master_20 <- courses_20 %>%
   left_join(CCMR_demo19_comb, by = "id")
@@ -287,11 +289,10 @@ pR2(Music_Enrollment_Analysis_20)
 #R² < 0.1 → Weak model (consider adding more predictors).
 
 ##Testing for outliers usings cook's distance
-influence_measures_20 <- influence.measures(Music_Enrollment_Analysis_20)
-print(influence_measures)
+influence.measures(Music_Enrollment_Analysis_20)
 
 # Plot Cook's Distance
-plot(cooks.distance(Music_Enrollment_Analysis), type = "h", main = "Cook's Distance")
+plot(cooks.distance(Music_Enrollment_Analysis_20), type = "h", main = "Cook's Distance")
 # Pass
 
 ## Testing for highly imbalanced class
@@ -407,7 +408,7 @@ prop.table(table(cum_data_for_analysis_20$choir_binary))
 
 ##Model Fit, Goodness of Fit Test
 
-hoslem.test(Choir_Enrollment_Analysis_20$y, fitted(Choir_Enrollment_Analysis_20), g = 8)
+hoslem.test(Choir_Enrollment_Analysis_20$y, fitted(Choir_Enrollment_Analysis_20), g = 7)
 #p > 0.05 → Model fits well (good calibration).
 #p < 0.05 → Poor model fit.
 ## I think this is the first one we've passed
