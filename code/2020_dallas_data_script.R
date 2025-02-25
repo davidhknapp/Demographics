@@ -704,8 +704,8 @@ extract_2020_enrollment_model_results <- function(model_name, model) {
 }
 
 # Apply function to all models and combine into one dataframe
-enrollmentXdemographic_2020_results <- do.call(rbind, lapply(names(model_list), function(name) {
-  extract_2020_enrollment_model_results(name, model_list[[name]])
+enrollmentXdemographic_2020_results <- do.call(rbind, lapply(names(model_list_20), function(name) {
+  extract_2020_enrollment_model_results(name, model_list_20[[name]])
 }))
 
 # View the combined results
