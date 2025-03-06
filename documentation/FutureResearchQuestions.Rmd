@@ -4,40 +4,58 @@ output: html_document
 date: "2025-02-20"
 ---
 
-~~~ Possible avenues for future research
+###~~~ Possible avenues for future research
 
-Do modern and culturally responsive music ed classes serve a different population than traditional large ensembles?
-  What if we binned music enrollment as
-    Big 3 (Band, Choir, Orchestra)
-     "_____" ( Modern Band, Mariachi, other small ensembles)
-     "_____" ( Jazz Band(might be included in big 3), Theory, Conducting, etc..)
+1) Do modern and culturally responsive music ed classes serve a different population than traditional large ensembles?
+  1a) Do they serve those populations more effectively?
+        What if we binned music enrollment as
+        Big 3 (Band, Choir, Orchestra)
+        "_____" ( Modern Band, Mariachi, other small ensembles)
+        "_____" ( Jazz Band(might be included in big 3), Theory, Conducting, etc..)
   
-Persistance Questions
-  Are eco dis/minority populations less likely to persist in music education3rd and 4th years?
-  Does culturally responsive music education via avenues such as mariachi, modern band etc. improve retention for           different populations?
-  Did Matt's shift of music appreciation impact the rates of persistance in music education?
-  
-After Matt's music appreciation shift, did these students take the one course they need in music and leave or did they stick around?
+# Persistence Questions
+  1) Are eco dis/minority populations less likely to persist in music education3rd and 4th years?
+  2) What variables effect persistance in music ed?
+      2a) How do these vary across 2 years, 3 years, 4 years? from middle to high school?
+      2b) How do these vary between different kinds of music education?
+  3) Does culturally responsive music education via avenues such as mariachi, modern band etc. improve retention for           different populations?
+  Survival analysis might be a good way to examine persistence, I came up with an additional method which may be a            good compliment to the survival analysis to further descriptively describe the trends
 
-How did Matts music appreciation policy impact music education enrollment as a whole in the district? Were certain ensemble types effected more than others?
+# Matts Policy
+    1) Did Matt's shift of music appreciation impact the rates of persistence in music education?
+    2) After Matt's music appreciation shift, did these students take the one course they need in music and leave or            did they stick around?
+    3) How did Matt's music appreciation policy impact music education enrollment as a whole in the district? Were              certain ensemble types effected more than others?
 
-If we can get specifics on funding from Music will and Dallas Schools we can look at
-before and after enrollment trends in those courses.
+# Music Will impact
+  1) If we can get specifics on funding from Music will and Dallas Schools we can look at
+      before and after enrollment trends in those courses.
   This would likely be some kind of two sample ANCOVA, propensity score matching or synthetic control can create a        theoretical control group
 
-
-Matt would like evidence of music education impacting administrator valued characteristics such as test performance.
-Suggesting causality of music education on academic performance is difficult, however
-  1) using a front door control approach with attendance as a mediator we may be able to suggest a causal relationship
-      note) (there's something called a mediation analysis which I think is the same or simila as the front door                     control approach i mentioned)
-  2) with data on music program funding for each schools we may be able to create an instrumental variable (IV) design
-  3) if nothing else we could examine the effect off attendance on academic performance and/or music education on attendance as separate regressions.
-  4) Is it possible that students responded well to Matt's cancellation of music app and it effected attendance?
-  5) Matt mentioned examining military readiness? We could look into this although I'm not sure there is much there,        although that being said a significant amount of my band and choir kids were also part of ROTC in the high            school I taught at.
+# Matt's request
+Matt would like evidence of music education impacting administrator valued characteristics such as test performance, military readiness or attendance.
+  1) Suggesting causality of music education on academic performance is difficult, however
+    a) using a front door control approach with attendance as a mediator we may be able to suggest a causal                     relationship note) (there's something called a mediation analysis which I think is the same or similar as             the front door control approach i mentioned)
+    b) with data on music program funding for each schools we may be able to create an instrumental variable (IV)               design
+    c) if nothing else we could examine the effect off attendance on academic performance and/or music education on             attendance as separate regressions.
+  2) Is it possible that students responded well to Matt's cancellation of music app and it effected attendance?
+  3) Matt mentioned examining military readiness? We could look into this although I'm not sure there is much there,        although that being said a significant amount of my band and choir kids were also part of ROTC in the high            school I taught at.
   
-  
-Using matching methods we could create a theoretical control group and compare populations attendance with music enrollment as the treatment variable
+# Attendance
+I addressed many attendance related questions above, though this question is solely attendance related.
+  1) Using matching methods we could create a theoretical control group and compare populations attendance with music         enrollment as the treatment variable
   ?) What is the effect of music ed enrollment on attendance?
+
+# Policy effects?
+Texas HB 21 and HB 3 - School finance legislation: went into effect in 2019
+  a) both increased funding for public schools,
+  b) HB3 increased per pupil funding and teacher compensation
+  c) HB 21 provided more funding to both public and charter seperately
+      I was kind of hoping that it diverted funds because it would be a great paper but also a sad effect
+      If we could could Florida data we could examine Ronny's voucher sh**
+
+Requires 2007 and prior data
+TEC - Texas Education Code
+  a) restricted pulling students out of classes including music classes for remideial work for more than 10% of school         days
 
 
               
