@@ -39,7 +39,7 @@ Matt would like evidence of music education impacting administrator valued chara
     c) if nothing else we could examine the effect off attendance on academic performance and/or music education on             attendance as separate regressions.
   2) Is it possible that students responded well to Matt's cancellation of music app and it effected attendance?
   3) Matt mentioned examining military readiness? We could look into this although I'm not sure there is much there,        although that being said a significant amount of my band and choir kids were also part of ROTC in the high            school I taught at.
-  
+
 # Attendance
 I addressed many attendance related questions above, though this question is solely attendance related.
   1) Using matching methods we could create a theoretical control group and compare populations attendance with music         enrollment as the treatment variable
@@ -49,13 +49,29 @@ I addressed many attendance related questions above, though this question is sol
 Texas HB 21 and HB 3 - School finance legislation: went into effect in 2019
   a) both increased funding for public schools,
   b) HB3 increased per pupil funding and teacher compensation
-  c) HB 21 provided more funding to both public and charter seperately
+  c) HB 21 provided more funding to both public and charter separately
       I was kind of hoping that it diverted funds because it would be a great paper but also a sad effect
       If we could could Florida data we could examine Ronny's voucher sh**
 
 Requires 2007 and prior data
 TEC - Texas Education Code
-  a) restricted pulling students out of classes including music classes for remideial work for more than 10% of school         days
+  a) restricted pulling students out of classes including music classes for remedial work for more than 10% of school         days
 
+# Racematching / Gender Matching with teachers
+  Can we get teacher demographic data and look at Race/Gender matching effects on enrollment?
 
+# Notes from meeting with brian 3/6: 
+
+Did modern band introduce students to other ensembles
+Did it "cannibalize" from other music ed types?
+Special needs longevity and enrollment, multiple semesters? 
+
+  What courses satisfy arts credits? What is the Dallas arts credit?
+    is Music satisfying this credit fro students better?
+    is visual art, theatre etc.. more welcoming to older students, marginalized students? than music?
+    
+  when do students join for the first time in different ensembles?
+  are juniors seniors etc. more likely to enroll in modern band?
+  
+  
               
