@@ -6,34 +6,36 @@ date: "2025-02-20"
 
 ~~~ Possible avenues for future research
 
-What if we binned music enrollment as
-  Big 3 (Band, Choir, Orchestra)
-  "_____" ( Modern Band, Music appreciation, other small ensembles)
-  "_____" ( Jazz Band, Theory, Conducting, etc..)
+Do modern and culturally responsive music ed classes serve a different population than traditional large ensembles?
+  What if we binned music enrollment as
+    Big 3 (Band, Choir, Orchestra)
+     "_____" ( Modern Band, Mariachi, other small ensembles)
+     "_____" ( Jazz Band(might be included in big 3), Theory, Conducting, etc..)
   
+Persistance Questions
+  Are eco dis/minority populations less likely to persist in music education3rd and 4th years?
+  Does culturally responsive music education via avenues such as mariachi, modern band etc. improve retention for           different populations?
+  Did Matt's shift of music appreciation impact the rates of persistance in music education?
+  
+After Matt's music appreciation shift, did these students take the one course they need in music and leave or did they stick around?
 
-Are eco dis/minority populations less likely to persist in music education3rd and 4th years?
+How did Matts music appreciation policy impact music education enrollment as a whole in the district? Were certain ensemble types effected more than others?
 
 If we can get specifics on funding from Music will and Dallas Schools we can look at
-before and after enrollment trends in those courses. 
+before and after enrollment trends in those courses.
+  This would likely be some kind of two sample ANCOVA, propensity score matching or synthetic control can create a        theoretical control group
 
-It sounds like there was a district push for Mariachi? When and what was this?
-    I think this was an increase in funding?
-    There was a conversation that took place, rather than a mandate, that shifted classes to Mariachi
-      some stand alone schools started it then it bled out, about a third of the comprehensive middle and high             schools have mariachi now. 2020/21/(22 maybe) covid was an opportunity to shift priorities
-          around this time is when they decided not to use music appreciation as a dumping ground,
-            this marked the introduction of a modern band code
-            
-            the only schools in Dallas these days that have traditional Music Appreciation are typically Dual enrollment/special high schools, most all music appreciation now is modern band 
-            Matt thinks that all music increased in enrollment but modern band and mariachi had the most significant impact
-            
-            
-            Matt would like ....
-              evidence of music education enrollment on attendance or on standaradized tests (STAR, EOC, ACT, SAT) and GPA
-              impact music enrollment on military, college, or career enrollment or college graduation. 
-              music enrollment impact on discipline?
-              
-The dif and dif idea might work really well if we compared the difference in persistence before and after implementation of modernband/mariachi course code
+
+Matt would like evidence of music education impacting administrator valued characteristics such as test performance.
+Suggesting causality of music education on academic performance is difficult, however
+  1) using a front door control approach with attendance as a mediator we may be able to suggest a causal relationship
+  2) with data on music program funding for each schools we may be able to create an instrumental variable (IV) design
+  3) if nothing else we could examine the effect off attendance on academic performance and/or music education on attendance as seperate regressions.
+  4) Is it possible that students responded well to Matt's cancelation of music app and it effected attendance?
+  5) Matt mentioned exmaining military readiness? We could look into this although I'm not sure there is much there,        althoguh that being said a significant amount of my band and choir kids were also part of ROTC in the high            school I taught at.
+  
+Using matching methods we could create a theoretical control group and compare populations attendance with music enrollment as the treatment variable
+  ?) What is the effect of music ed enrollment on attendance?
 
 
               
